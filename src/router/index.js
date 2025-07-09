@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/LoginPage.vue'
+import RoleSelection from '../views/RoleSelectionPage.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,14 @@ const routes = [
     component: Login,
     meta: {
       title: '移动宽带安装 - 登录'
+    }
+  },
+  {
+    path: '/role-selection',
+    name: 'RoleSelection',
+    component: RoleSelection,
+    meta: {
+      title: '移动宽带安装 - 选择身份'
     }
   }
 ]

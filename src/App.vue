@@ -20,7 +20,8 @@ export default {
 html, body {
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', 'Noto Sans SC', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,8 +30,9 @@ html, body {
 
 #app {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* 禁用选择和拖拽 */

@@ -122,8 +122,12 @@ export default {
       // 模拟登录请求
       setTimeout(() => {
         this.loading = false;
-        this.$toast.success("登录成功！即将跳转到首页...");
-        // 在这里执行跳转逻辑, e.g., this.$router.push('/home');
+        this.$toast.success("登录成功！即将跳转到选择页面...");
+
+        // 跳转到角色选择页面
+        setTimeout(() => {
+          this.$router.push('/role-selection');
+        }, 800);
       }, 1500);
     },
   },
@@ -143,7 +147,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  overflow: hidden;
+  overflow: auto;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
