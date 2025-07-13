@@ -1,14 +1,11 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import { Button, Field, Form, Checkbox, Toast } from "vant";
+import * as Vant from 'vant';
+import 'vant/lib/index.css';
 import "@fortawesome/fontawesome-free/css/all.css";
 
-Vue.use(Button);
-Vue.use(Field);
-Vue.use(Form);
-Vue.use(Checkbox);
-Vue.use(Toast);
+Vue.use(Vant);
 
 Vue.config.productionTip = false;
 
