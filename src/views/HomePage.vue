@@ -35,6 +35,7 @@
               :key="service.title"
               class="service-card"
               :style="{ backgroundColor: service.bgColor }"
+              @click="navigateToPage(service.route)"
             >
               <div class="icon-wrapper" :style="{ backgroundColor: service.iconBgColor }">
                 <van-icon :name="service.icon" color="white" size="20" />
@@ -51,7 +52,11 @@
         <section class="all-features-section">
           <h3 class="section-title">全部功能</h3>
           <van-grid :border="false" :column-num="4" :gutter="12">
-            <van-grid-item v-for="feature in allFeatures" :key="feature.text">
+            <van-grid-item
+              v-for="feature in allFeatures"
+              :key="feature.text"
+              @click="navigateToPage(feature.route)"
+            >
                <template #icon>
                   <van-icon :name="feature.icon" :color="feature.color" size="26" />
                </template>
@@ -64,7 +69,7 @@
       </div>
   
       <!-- 5. 底部导航栏 -->
-      <van-tabbar v-model="activeTab" active-color="#1d63ff" inactive-color="#707070">
+      <van-tabbar v-model="activeTab" active-color="#1d63ff" inactive-color="#707070" @change="onTabChange">
         <van-tabbar-item>
           <span>首页</span>
           <template #icon="props">
@@ -81,68 +86,101 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
-  
-  const activeTab = ref(0);
-  
-  const slides = ref([
-    {
-      image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80',
-      title: '家庭影院级体验',
-      subtitle: '超高清视频流畅播放，无卡顿',
+  <script>
+  import { Toast } from 'vant';
+
+  export default {
+    name: 'HomePage',
+    data() {
+      return {
+        activeTab: 0,
+        slides: [
+          {
+            image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80',
+            title: '家庭影院级体验',
+            subtitle: '超高清视频流畅播放，无卡顿',
+          },
+          {
+            image: 'https://images.unsplash.com/photo-1587145820266-a5951ee6f620?w=800&q=80',
+            title: '极速光纤，一键到家',
+            subtitle: '全新千兆套餐，畅享数字生活',
+          },
+        ],
+        commonServices: [
+          {
+            title: '套餐订购',
+            subtitle: '升级您的网络',
+            icon: 'shopping-cart-o',
+            bgColor: '#f0f6ff',
+            iconBgColor: '#409eff',
+            route: '/package-order'
+          },
+          {
+            title: '我的账单',
+            subtitle: '查看消费明细',
+            icon: 'bill-o',
+            bgColor: '#f0f9f3',
+            iconBgColor: '#52c41a',
+            route: '/my-bill'
+          },
+          {
+            title: '在线客服',
+            subtitle: '7x24小时支持',
+            icon: 'service-o',
+            bgColor: '#f6f2ff',
+            iconBgColor: '#722ed1',
+            route: '/customer-service'
+          },
+          {
+            title: '业务退订',
+            subtitle: '退订业务',
+            icon: 'replay',
+            bgColor: '#fffbe6',
+            iconBgColor: '#faad14',
+            route: '/business-cancellation'
+          },
+        ],
+        // --- ICON CORRECTION IS HERE ---
+        allFeatures: [
+          { icon: 'search', text: '产品查询', color: '#409eff', route: '/product-query' },
+          { icon: 'gold-coin-o', text: '预充值', color: '#52c41a', route: '/pre-recharge' },
+          { icon: 'exchange', text: '变更过户', color: '#722ed1', route: '/change-transfer' },
+          { icon: 'calendar-o', text: '自助续费', color: '#f5222d', route: '/self-renewal' },
+          { icon: 'todo-list-o', text: '业务申请', color: '#3071a9', route: '/business-application' },
+          { icon: 'description', text: '电子协议', color: '#13c2c2', route: '/electronic-agreement' },
+          { icon: 'orders-o', text: '开票', color: '#fa8c16', route: '/invoice' },
+          { icon: 'warning-o', text: '举报投诉', color: '#8c8c8c', route: '/complaint' }, // Corrected icon
+          { icon: 'star-o', text: '服务评价', color: '#faad14', route: '/service-evaluation' },
+          { icon: 'paid', text: '代缴代扣', color: '#eb2f96', route: '/payment-collection' },
+        ]
+      };
     },
-    {
-      image: 'https://images.unsplash.com/photo-1587145820266-a5951ee6f620?w=800&q=80',
-      title: '极速光纤，一键到家',
-      subtitle: '全新千兆套餐，畅享数字生活',
-    },
-  ]);
-  
-  const commonServices = ref([
-    {
-      title: '套餐订购',
-      subtitle: '升级您的网络',
-      icon: 'shopping-cart-o',
-      bgColor: '#f0f6ff',
-      iconBgColor: '#409eff',
-    },
-    {
-      title: '我的账单',
-      subtitle: '查看消费明细',
-      icon: 'bill-o',
-      bgColor: '#f0f9f3',
-      iconBgColor: '#52c41a',
-    },
-    {
-      title: '在线客服',
-      subtitle: '7x24小时支持',
-      icon: 'service-o',
-      bgColor: '#f6f2ff',
-      iconBgColor: '#722ed1',
-    },
-    {
-      title: '业务退订',
-      subtitle: '退订业务',
-      icon: 'replay',
-      bgColor: '#fffbe6',
-      iconBgColor: '#faad14',
-    },
-  ]);
-  
-  // --- ICON CORRECTION IS HERE ---
-  const allFeatures = ref([
-    { icon: 'search', text: '产品查询', color: '#409eff' },
-    { icon: 'gold-coin-o', text: '预充值', color: '#52c41a' },
-    { icon: 'exchange', text: '变更过户', color: '#722ed1' },
-    { icon: 'calendar-o', text: '自助续费', color: '#f5222d' },
-    { icon: 'todo-list-o', text: '业务申请', color: '#3071a9' },
-    { icon: 'description', text: '电子协议', color: '#13c2c2' },
-    { icon: 'orders-o', text: '开票', color: '#fa8c16' },
-    { icon: 'warning-o', text: '举报投诉', color: '#8c8c8c' }, // Corrected icon
-    { icon: 'star-o', text: '服务评价', color: '#faad14' },
-    { icon: 'paid', text: '代缴代扣', color: '#eb2f96' },
-  ]);
+    methods: {
+      // 导航方法
+      navigateToPage(route) {
+        if (route) {
+          this.$router.push(route);
+        } else {
+          Toast('功能开发中，敬请期待');
+        }
+      },
+
+      // 底部导航栏切换
+      onTabChange(index) {
+        if (index === 0) {
+          // 首页，已经在首页了，不需要跳转
+          return;
+        } else if (index === 1) {
+          // 我的页面，暂时显示提示
+          Toast('我的页面开发中，敬请期待');
+          // 重置为首页
+          setTimeout(() => {
+            this.activeTab = 0;
+          }, 100);
+        }
+      }
+    }
+  };
   </script>
   
   <style scoped>
@@ -260,6 +298,17 @@
     align-items: center;
     padding: 16px 12px;
     border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .service-card:active {
+    transform: translateY(0);
   }
   
   .icon-wrapper {
@@ -295,6 +344,19 @@
   .all-features-section .van-grid-item :deep(.van-grid-item__content) {
     background-color: transparent;
     padding: 8px 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+  }
+
+  .all-features-section .van-grid-item:hover :deep(.van-grid-item__content) {
+    background-color: rgba(0, 0, 0, 0.02);
+    transform: translateY(-2px);
+  }
+
+  .all-features-section .van-grid-item:active :deep(.van-grid-item__content) {
+    transform: translateY(0);
+    background-color: rgba(0, 0, 0, 0.05);
   }
   
   .feature-text {

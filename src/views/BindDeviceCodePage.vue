@@ -59,33 +59,51 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref } from 'vue';
-  import { showToast } from 'vant';
-  
-  // State
-  const deviceCode = ref('');
-  const isLoading = ref(false);
-  
-  // Event Handlers
-  const onScan = () => {
-    showToast('启动摄像头扫描... (模拟)');
-    // In a real app, you would integrate a QR scanner library here.
-  };
-  
-  const onManualSubmit = () => {
-    if (deviceCode.value.length < 16) {
-      showToast('请输入16位设备绑定码');
-      return;
+  <script>
+  import { Toast } from 'vant';
+
+  export default {
+    name: 'BindDeviceCodePage',
+    data() {
+      return {
+        deviceCode: '',
+        isLoading: false
+      };
+    },
+    methods: {
+      onScan() {
+        Toast('启动摄像头扫描... (模拟)');
+        // 模拟扫码成功
+        setTimeout(() => {
+          Toast.success('扫码绑定成功！');
+          // 扫码成功后跳转到首页
+          setTimeout(() => {
+            this.$router.push('/home');
+          }, 800);
+        }, 2000);
+        // In a real app, you would integrate a QR scanner library here.
+      },
+
+      onManualSubmit() {
+        if (this.deviceCode.length < 16) {
+          Toast('请输入16位设备绑定码');
+          return;
+        }
+        this.isLoading = true;
+        console.log('Binding with code:', this.deviceCode);
+
+        setTimeout(() => {
+          this.isLoading = false;
+          Toast.success('设备绑定成功！');
+          this.deviceCode = '';
+
+          // 绑定成功后跳转到首页
+          setTimeout(() => {
+            this.$router.push('/home');
+          }, 800);
+        }, 1500);
+      }
     }
-    isLoading.value = true;
-    console.log('Binding with code:', deviceCode.value);
-    
-    setTimeout(() => {
-      isLoading.value = false;
-      showToast.success('设备绑定成功！');
-      deviceCode.value = '';
-    }, 1500);
   };
   </script>
   

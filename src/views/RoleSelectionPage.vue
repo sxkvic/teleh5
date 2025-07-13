@@ -131,9 +131,9 @@ export default {
         
         // 根据角色跳转
         if(role === 'user') {
-          this.$toast.success('进入用户系统成功！');
+          this.$toast.success('选择用户身份成功！');
           setTimeout(() => {
-            this.$router.push('/home');
+            this.$router.push('/bind-device-code');
           }, 800);
         } else {
           this.$toast.success('进入安装师傅系统成功！');
