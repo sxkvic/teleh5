@@ -18,6 +18,7 @@ import BusinessApplication from '../views/BusinessApplicationPage.vue'
 import ElectronicAgreement from '../views/ElectronicAgreementPage.vue'
 import PaymentCollection from '../views/PaymentCollectionPage.vue'
 import ChangeTransfer from '../views/ChangeTransferPage.vue'
+import My from '../views/MyPage.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -56,6 +57,15 @@ const routes = [
     component: Home,
     meta: {
       title: '移动宽带安装 - 首页'
+    }
+  },
+  // 我的
+  {
+    path: '/my',
+    name: 'My',
+    component: My,
+    meta: {
+      title: '移动宽带安装 - 我的'
     }
   },
   // 套餐订购
