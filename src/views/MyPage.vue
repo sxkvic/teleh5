@@ -214,7 +214,7 @@
   .service-grid.van-grid { margin-left: -5px; margin-right: -5px; }
   :deep(.van-grid-item__content) { background-color: transparent; padding: 8px !important; }
   .service-icon-wrapper { width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 22px; margin-bottom: 8px; }
-  .service-text { font-size: 13px; color: #374151; }
+  .service-text { font-size: 12px; color: #374151; }
   
   /* --- 更多功能列表 --- */
   :deep(.van-cell-group) { margin: -10px; }
