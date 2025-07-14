@@ -171,12 +171,8 @@
           // 首页，已经在首页了，不需要跳转
           return;
         } else if (index === 1) {
-          // 我的页面，暂时显示提示
-          Toast('我的页面开发中，敬请期待');
-          // 重置为首页
-          setTimeout(() => {
-            this.activeTab = 0;
-          }, 100);
+          // 跳转到我的页面
+          this.$router.push('/my');
         }
       }
     }
