@@ -88,7 +88,9 @@ export default {
           }, 800);
         } else {
           this.$toast.success('进入安装师傅系统成功！');
-          // this.$router.push('/worker-dashboard');
+          setTimeout(() => {
+            this.$router.push('/master-home');
+          }, 800);
         }
       }, 1500);
     },
@@ -172,9 +174,22 @@ export default {
   z-index: 2;
   transition: color 0.4s ease;
 }
-.role-tabs.user .tab-item:first-child,
-.role-tabs.worker .tab-item:last-child {
-  color: #1d63ff; /* 激活文字颜色 */
+/* 确保非激活状态的样式 */
+.role-tabs .tab-item {
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+/* 激活状态样式 - 用户选中时 */
+.role-tabs.user .tab-item:nth-child(1) {
+  color: #1a365d !important;
+  font-weight: 600 !important;
+}
+
+/* 激活状态样式 - 师傅选中时 */
+.role-tabs.worker .tab-item:nth-child(2) {
+  color: #1a365d !important;
+  font-weight: 600 !important;
 }
 .tab-glider {
   position: absolute;

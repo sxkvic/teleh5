@@ -2,11 +2,6 @@
   <div class="master-home-page">
     <!-- 1. 顶部个人信息卡片 -->
     <div class="header-section">
-      <div class="header-background">
-        <div class="bg-pattern"></div>
-        <div class="bg-gradient"></div>
-      </div>
-
       <div class="profile-card">
         <div class="avatar-container">
           <div class="avatar-ring">
@@ -71,115 +66,65 @@
 
           <div class="tab-panel">
             <van-pull-refresh v-model="refreshing" @refresh="onRefresh" class="pull-refresh">
-              <div v-if="getOrdersByStatus(status.key).length > 0" class="orders-grid">
-                <div v-for="order in getOrdersByStatus(status.key)" :key="order.id" class="modern-order-card">
-                  <!-- 工单状态标签 -->
-                  <div class="order-status-badge" :class="order.status">
-                    <i :class="getStatusIcon(order.status)"></i>
-                    <span>{{ getStatusText(order.status) }}</span>
-                  </div>
+              <div v-if="getOrdersByStatus(status.key).length > 0" class="orders-list">
+                <div v-for="order in getOrdersByStatus(status.key)" :key="order.id" class="order-item">
+                  <!-- 左侧状态指示器 -->
+                  <div class="status-indicator" :class="order.status"></div>
 
-                  <!-- 服务类型标签 -->
-                  <div class="service-type-tag" :class="order.tagType">
-                    <i :class="getServiceIcon(order.serviceType)"></i>
-                    <span>{{ order.serviceType }}</span>
-                  </div>
-
-                  <!-- 客户信息 -->
-                  <div class="customer-section">
-                    <div class="customer-avatar">
-                      <i class="fas fa-user"></i>
+                  <!-- 主要内容 -->
+                  <div class="order-content">
+                    <!-- 头部信息 -->
+                    <div class="order-header">
+                      <div class="order-info">
+                        <span class="customer-name">{{ order.customerName }}</span>
+                        <span class="order-id">{{ order.id }}</span>
+                      </div>
+                      <div class="service-type" :class="order.tagType">
+                        {{ order.serviceType }}
+                      </div>
                     </div>
-                    <div class="customer-info">
-                      <h3 class="customer-name">{{ order.customerName }}</h3>
-                      <p class="order-id">订单号: {{ order.id }}</p>
-                    </div>
-                  </div>
 
-                  <!-- 地址和时间信息 -->
-                  <div class="order-details">
-                    <div class="detail-item">
-                      <div class="detail-icon">
+                    <!-- 详细信息 -->
+                    <div class="order-meta">
+                      <div class="meta-item">
                         <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ order.address }}</span>
                       </div>
-                      <div class="detail-content">
-                        <span class="detail-label">服务地址</span>
-                        <span class="detail-value">{{ order.address }}</span>
-                      </div>
-                    </div>
-
-                    <div class="detail-item">
-                      <div class="detail-icon">
+                      <div class="meta-item">
                         <i class="fas fa-clock"></i>
-                      </div>
-                      <div class="detail-content">
-                        <span class="detail-label">预约时间</span>
-                        <span class="detail-value">{{ order.appointmentTime }}</span>
+                        <span>{{ order.appointmentTime }}</span>
                       </div>
                     </div>
                   </div>
-                  <!-- 操作按钮区域 -->
-                  <div class="action-section">
+
+                  <!-- 右侧操作区 -->
+                  <div class="order-actions">
                     <template v-if="order.status === 'pending'">
-                      <button
-                        class="modern-btn primary-btn full-width"
-                        @click="openAcceptPopup(order)"
-                        :disabled="order.loading"
-                      >
-                        <div class="btn-content">
-                          <i class="fas fa-hand-paper" v-if="!order.loading"></i>
-                          <i class="fas fa-spinner fa-spin" v-else></i>
-                          <span>{{ order.loading ? '处理中...' : '接受工单' }}</span>
-                        </div>
-                        <div class="btn-shine"></div>
+                      <button class="action-btn primary" @click="openAcceptPopup(order)" :disabled="order.loading">
+                        <i class="fas fa-hand-paper" v-if="!order.loading"></i>
+                        <i class="fas fa-spinner fa-spin" v-else></i>
                       </button>
                     </template>
 
                     <template v-if="order.status === 'processing'">
-                      <div class="btn-group">
-                        <button
-                          class="modern-btn secondary-btn"
-                          @click="openTransferPopup(order)"
-                          :disabled="order.loading"
-                        >
-                          <i class="fas fa-share-alt"></i>
-                          <span>转派</span>
-                        </button>
-                        <button
-                          class="modern-btn success-btn"
-                          @click="handleOrderAction(order, 'start')"
-                          :disabled="order.loading"
-                        >
-                          <i class="fas fa-play"></i>
-                          <span>开始</span>
-                        </button>
-                      </div>
+                      <button class="action-btn secondary" @click="openTransferPopup(order)" :disabled="order.loading">
+                        <i class="fas fa-share-alt"></i>
+                      </button>
+                      <button class="action-btn success" @click="handleOrderAction(order, 'start')" :disabled="order.loading">
+                        <i class="fas fa-play"></i>
+                      </button>
                     </template>
 
                     <template v-if="order.status === 'in_progress'">
-                      <button
-                        class="modern-btn warning-btn full-width"
-                        @click="openCompletePopup(order)"
-                        :disabled="order.loading"
-                      >
-                        <div class="btn-content">
-                          <i class="fas fa-flag-checkered" v-if="!order.loading"></i>
-                          <i class="fas fa-spinner fa-spin" v-else></i>
-                          <span>{{ order.loading ? '提交中...' : '完成施工' }}</span>
-                        </div>
-                        <div class="btn-shine"></div>
+                      <button class="action-btn warning" @click="openCompletePopup(order)" :disabled="order.loading">
+                        <i class="fas fa-flag-checkered" v-if="!order.loading"></i>
+                        <i class="fas fa-spinner fa-spin" v-else></i>
                       </button>
                     </template>
 
                     <template v-if="order.status === 'reviewing' || order.status === 'closed'">
-                      <button
-                        class="modern-btn info-btn full-width"
-                        @click="handleOrderAction(order, 'view')"
-                      >
-                        <div class="btn-content">
-                          <i class="fas fa-eye"></i>
-                          <span>查看详情</span>
-                        </div>
+                      <button class="action-btn info" @click="handleOrderAction(order, 'view')">
+                        <i class="fas fa-eye"></i>
                       </button>
                     </template>
                   </div>
@@ -495,40 +440,7 @@ const onRefresh = async () => {
   refreshing.value = false;
 };
 
-// 获取状态图标
-const getStatusIcon = (status) => {
-  const iconMap = {
-    'pending': 'fas fa-hourglass-half',
-    'processing': 'fas fa-cogs',
-    'in_progress': 'fas fa-tools',
-    'reviewing': 'fas fa-search-plus',
-    'closed': 'fas fa-check-circle'
-  };
-  return iconMap[status] || 'fas fa-question-circle';
-};
 
-// 获取状态文本
-const getStatusText = (status) => {
-  const textMap = {
-    'pending': '待接单',
-    'processing': '待处理',
-    'in_progress': '施工中',
-    'reviewing': '审核中',
-    'closed': '已完成'
-  };
-  return textMap[status] || '未知状态';
-};
-
-// 获取服务图标
-const getServiceIcon = (serviceType) => {
-  const iconMap = {
-    '新装': 'fas fa-plus-circle',
-    '维修': 'fas fa-wrench',
-    '升级': 'fas fa-arrow-up',
-    '移机': 'fas fa-exchange-alt'
-  };
-  return iconMap[serviceType] || 'fas fa-cog';
-};
 
 // 获取标签页图标
 const getTabIcon = (status) => {
@@ -570,67 +482,48 @@ const getEmptyDescription = (status) => {
 <style scoped>
 /* === 全局样式重置 === */
 .master-home-page {
-  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
-  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* 添加装饰性背景元素 */
+.master-home-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* === 顶部个人信息卡片 === */
 .header-section {
   position: relative;
-  padding: 20px 16px 40px;
-  overflow: hidden;
-}
-
-.header-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-}
-
-.bg-gradient {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg,
-    #667eea 0%,
-    #764ba2 50%,
-    #f093fb 100%);
-}
-
-.bg-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
-  animation: float 20s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(1deg); }
+  padding: 24px 16px 32px;
+  background: transparent;
+  z-index: 2;
 }
 
 .profile-card {
-  position: relative;
-  z-index: 2;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border-radius: 24px;
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
   padding: 24px;
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -642,23 +535,19 @@ const getEmptyDescription = (status) => {
 
 .avatar-ring {
   position: relative;
-  padding: 4px;
-  background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+  padding: 3px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   border-radius: 50%;
-  animation: rotate 10s linear infinite;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 4px solid white;
+  border: 3px solid white;
   object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: block;
 }
 
@@ -674,14 +563,7 @@ const getEmptyDescription = (status) => {
 
 .status-dot.online {
   background: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
-  animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .profile-info {
@@ -705,24 +587,13 @@ const getEmptyDescription = (status) => {
 
 .wave-emoji {
   font-size: 18px;
-  animation: wave 2s ease-in-out infinite;
-}
-
-@keyframes wave {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(20deg); }
-  75% { transform: rotate(-10deg); }
 }
 
 .master-name {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
   color: #1e293b;
   margin: 0 0 16px 0;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .master-details {
@@ -784,19 +655,29 @@ const getEmptyDescription = (status) => {
 
 /* === 标签页容器 === */
 .tabs-container {
-  background: white;
-  margin: -20px 16px 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 0 16px;
   border-radius: 20px 20px 0 0;
   position: relative;
-  z-index: 3;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .tabs-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px 16px;
+  padding: 16px 20px 12px;
   border-bottom: 1px solid #f1f5f9;
 }
 
@@ -841,21 +722,50 @@ const getEmptyDescription = (status) => {
 
 /* === 现代化标签页 === */
 .modern-tabs {
-  --van-tabs-line-height: 56px;
-  --van-tab-font-size: 14px;
+  --van-tabs-line-height: 72px;
+  --van-tab-font-size: 12px;
 }
 
 :deep(.van-tabs__wrap) {
-  background: white;
-  box-shadow: none;
-  border-bottom: 1px solid #f1f5f9;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 72px;
+  padding: 8px 0;
+}
+
+:deep(.van-tabs__nav) {
+  padding: 12px 8px 8px 8px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+:deep(.van-tabs__content) {
+  overflow-x: auto;
+  margin-top: 0;
+}
+
+:deep(.van-tabs__track) {
+  background: #f8fafc;
 }
 
 :deep(.van-tab) {
-  padding: 0 16px;
+  padding: 12px 12px;
   color: #64748b;
   font-weight: 500;
   transition: all 0.3s ease;
+  min-width: 65px;
+  min-height: 64px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.van-tab--active) {
@@ -882,191 +792,216 @@ const getEmptyDescription = (status) => {
 
 .tab-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 2px;
+  min-width: 50px;
+  height: 100%;
+  padding: 4px 0;
 }
 
 .tab-content i {
-  font-size: 14px;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.tab-content span {
+  font-size: 11px;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .tab-panel {
-  background: #f8fafc;
-  min-height: 60vh;
+  background: transparent;
 }
 
 .pull-refresh {
-  min-height: 60vh;
+  min-height: 200px;
 }
 
 :deep(.van-pull-refresh__track) {
-  background: #f8fafc;
+  background: transparent;
 }
 
-/* === 工单网格布局 === */
-.orders-grid {
-  padding: 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+/* === 工单列表布局 === */
+.orders-list {
+  padding: 8px 16px;
 }
 
-/* === 现代化工单卡片 === */
-.modern-order-card {
-  background: white;
-  border-radius: 20px;
-  padding: 0;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(0, 0, 0, 0.02);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.modern-order-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(59, 130, 246, 0.1);
-}
-
-.modern-order-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg,
-    #667eea 0%,
-    #764ba2 50%,
-    #f093fb 100%);
-  z-index: 1;
-}
-
-/* === 工单状态标签 === */
-.order-status-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+.order-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 2;
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-}
-
-.order-status-badge.pending {
-  background: rgba(251, 191, 36, 0.9);
-  color: #92400e;
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-}
-
-.order-status-badge.processing {
-  background: rgba(59, 130, 246, 0.9);
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.order-status-badge.in_progress {
-  background: rgba(16, 185, 129, 0.9);
-  color: white;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.order-status-badge.reviewing {
-  background: rgba(139, 92, 246, 0.9);
-  color: white;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-}
-
-.order-status-badge.closed {
-  background: rgba(107, 114, 128, 0.9);
-  color: white;
-  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
-}
-
-/* === 服务类型标签 === */
-.service-type-tag {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  z-index: 2;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
 }
 
-.service-type-tag.primary {
-  background: rgba(59, 130, 246, 0.1);
-  color: #1d4ed8;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+.order-item:hover {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
 }
 
-.service-type-tag.warning {
-  background: rgba(245, 158, 11, 0.1);
-  color: #d97706;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-/* === 客户信息区域 === */
-.customer-section {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 60px 20px 20px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.customer-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 18px;
+.status-indicator {
+  width: 4px;
+  height: 40px;
+  border-radius: 2px;
+  margin-right: 12px;
   flex-shrink: 0;
 }
 
-.customer-info {
+.status-indicator.pending { background: #f59e0b; }
+.status-indicator.processing { background: #3b82f6; }
+.status-indicator.in_progress { background: #10b981; }
+.status-indicator.reviewing { background: #8b5cf6; }
+.status-indicator.closed { background: #6b7280; }
+
+.order-content {
   flex: 1;
   min-width: 0;
 }
 
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.order-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .customer-name {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: #1e293b;
-  margin: 0 0 4px 0;
 }
 
 .order-id {
-  font-size: 13px;
+  font-size: 12px;
   color: #64748b;
-  margin: 0;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.service-type {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
   font-weight: 500;
 }
 
-/* === 工单详情区域 === */
-.order-details {
-  padding: 20px;
+.service-type.primary { background: #dbeafe; color: #1d4ed8; }
+.service-type.warning { background: #fef3c7; color: #d97706; }
+.service-type.success { background: #d1fae5; color: #059669; }
+
+.order-meta {
   display: flex;
-  flex-direction: column;
   gap: 16px;
 }
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.meta-item i {
+  width: 12px;
+  font-size: 10px;
+}
+
+.order-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.action-btn.secondary {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.action-btn.secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.action-btn.success {
+  background: #10b981;
+  color: white;
+}
+
+.action-btn.success:hover:not(:disabled) {
+  background: #059669;
+}
+
+.action-btn.warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.action-btn.warning:hover:not(:disabled) {
+  background: #d97706;
+}
+
+.action-btn.info {
+  background: #8b5cf6;
+  color: white;
+}
+
+.action-btn.info:hover:not(:disabled) {
+  background: #7c3aed;
+}
+
+
+
+
 
 .detail-item {
   display: flex;
@@ -1284,8 +1219,17 @@ const getEmptyDescription = (status) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: 40px 20px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  margin: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .empty-illustration {
@@ -1343,7 +1287,9 @@ const getEmptyDescription = (status) => {
 }
 
 .popup-container {
-  background: white;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   position: relative;
 }
 

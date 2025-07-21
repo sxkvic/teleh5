@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Splash from '../views/SplashPage.vue'
 import Login from '../views/LoginPage.vue'
 import RoleSelection from '../views/RoleSelectionPage.vue'
 import Home from '../views/HomePage.vue'
@@ -19,12 +20,21 @@ import ElectronicAgreement from '../views/ElectronicAgreementPage.vue'
 import PaymentCollection from '../views/PaymentCollectionPage.vue'
 import ChangeTransfer from '../views/ChangeTransferPage.vue'
 import My from '../views/MyPage.vue'
+import MasterHome from '../views/MasterHomePage.vue'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/splash'
+  },
+  {
+    path: '/splash',
+    name: 'Splash',
+    component: Splash,
+    meta: {
+      title: '云网宽带'
+    }
   },
   {
     path: '/login',
@@ -57,6 +67,15 @@ const routes = [
     component: Home,
     meta: {
       title: '移动宽带安装 - 首页'
+    }
+  },
+  // 师傅工作台
+  {
+    path: '/master-home',
+    name: 'MasterHome',
+    component: MasterHome,
+    meta: {
+      title: '移动宽带安装 - 师傅工作台'
     }
   },
   // 我的
